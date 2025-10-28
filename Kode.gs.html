@@ -1435,7 +1435,8 @@ function generateRekapPDF_SingleUserDetail_(selectedMonthYear, selectedSchool, s
   }
 }
 
-function prepareMonthlyRekapForPrint(adminEmail, selectedMonthYear, selectedSchool) {
+function prepareMonthlyRekapForPrint(selectedMonthYear, selectedSchool) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) return { success: false, error: "Akses ditolak." };
   return generateRekapPDF_MultiUserGrid_(selectedMonthYear, selectedSchool, null);
 }
@@ -1450,13 +1451,15 @@ function prepareSchoolRekapForPrint(userEmail, selectedMonthYear, selectedSchool
   return generateRekapPDF_MultiUserGrid_(selectedMonthYear, selectedSchool, null);
 }
 
-function getUsers(adminEmail) {
+function getUsers() {
+  const adminEmail = Session.getActiveUser().getEmail(); // 2. Dapatkan email dari sesi
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const users = usersSheet.getDataRange().getValues().slice(1);
   return users.map(user => ({email: user[0], password: user[1], name: user[2], school: user[3], role: user[4]}));
 }
 
-function addUser(adminEmail, userData) {
+function addUser(userData) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const usersData = usersSheet.getDataRange().getValues();
   const emailExists = usersData.some(row => row[0].toLowerCase() === userData.email.toLowerCase());
@@ -1473,7 +1476,8 @@ function addUser(adminEmail, userData) {
   return { status: "success", message: "User berhasil ditambah." };
 }
 
-function updateUser(adminEmail, userData) {
+function updateUser(userData) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const users = usersSheet.getDataRange().getValues();
   for (let i = 1; i < users.length; i++) {
@@ -1492,7 +1496,8 @@ function updateUser(adminEmail, userData) {
   return { status: "error", message: "User tidak ditemukan." };
 }
 
-function deleteUser(adminEmail, emailToDelete) {
+function deleteUser(emailToDelete) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const users = usersSheet.getDataRange().getValues();
   for (let i = 1; i < users.length; i++) {
@@ -1534,7 +1539,8 @@ function setSetting_(key, value) {
 }
 // --- AKHIR FUNGSI HELPER ---
 
-function getSettings(adminEmail) {
+function getSettings() {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   
   // --- AWAL PERUBAHAN ---
@@ -1568,7 +1574,8 @@ function getSettings(adminEmail) {
   // --- AKHIR PERUBAHAN ---
 }
 
-function saveLockedMonths(adminEmail, months) {
+function saveLockedMonths(months) {
+  const adminEmail = Session.getActiveUser().getEmail(); // 2. Dapatkan email dari sesi
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   // --- PERUBAHAN: Menggunakan helper ---
   setSetting_("locked_months", JSON.stringify(months));
@@ -1577,7 +1584,8 @@ function saveLockedMonths(adminEmail, months) {
 }
 
 // --- FUNGSI BARU UNTUK ADMIN ---
-function saveRequestDayLimit(adminEmail, dayLimit) {
+function saveRequestDayLimit(dayLimit) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const limit = parseInt(dayLimit, 10);
   if (isNaN(limit) || limit < 1 || limit > 31) {
@@ -1588,7 +1596,8 @@ function saveRequestDayLimit(adminEmail, dayLimit) {
 }
 // --- AKHIR FUNGSI BARU ---
 
-function saveHolidays(adminEmail, holidays) {
+function saveHolidays(holidays) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   holidaysSheet.getRange("A2:B").clearContent();
   if (holidays.length > 0) {
@@ -1604,7 +1613,8 @@ function getAnnouncements() {
   } catch (e) { return ""; }
 }
 
-function saveAnnouncements(adminEmail, announcementText) {
+function saveAnnouncements(announcementText) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   try {
     announcementsSheet.getRange("A1").setValue(announcementText);
@@ -1615,16 +1625,22 @@ function saveAnnouncements(adminEmail, announcementText) {
   }
 }
 
-function getSchoolList(adminEmail) {
+function getSchoolList() {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const usersData = usersSheet.getDataRange().getValues().slice(1);
   const allSchools = usersData.flatMap(row => (row[3] || "").split(',').map(s => s.trim()));
   return [...new Set(allSchools)].filter(Boolean);
 }
 
-function getSchoolTeachers(userEmail, selectedSchool) {
-  // MODIFIKASI: Akun guru juga boleh akses
-  // if (!checkIfAdminOrStaff(userEmail)) throw new Error("Akses ditolak.");
+function getSchoolTeachers(selectedSchool) {
+  const userEmail = Session.getActiveUser().getEmail(); // Dapatkan email dari sesi
+
+  // if (!checkIfAdminOrStaff(userEmail)) throw new Error("Akses ditolak."); // <-- Baris ini dikomentari di kode Anda
+  // Sebaiknya aktifkan pemeriksaan, atau buat pemeriksaan yang lebih baik:
+  if (!checkIfAdminOrStaff(userEmail) && !checkIfGuru(userEmail)) { // (asumsi Anda punya fungsi checkIfGuru)
+     throw new Error("Akses ditolak.");
+  }
   
   let schoolToFilter = selectedSchool;
   if (!schoolToFilter) {
@@ -2438,8 +2454,9 @@ function saveLKHWeeklyData(email, school, lkhWeeklyData) {
 // ===================================================================
 
 /**
- * Helper: Menghapus request 'pending' atau 'rejected' sebelumnya untuk user/bulan/sekolah.
+ * Helper: Menghapus request 'pending' sebelumnya untuk user/bulan/sekolah.
  * Ini dipanggil saat guru membuat pengajuan baru ATAU membatalkan.
+ * PERUBAHAN: Data 'rejected' tidak lagi dihapus agar riwayat penolakan tetap ada.
  */
 function clearPreviousRequests_(email, school, year, month) {
   const reqSheet = getChangeRequestsSheet_();
@@ -2456,7 +2473,7 @@ function clearPreviousRequests_(email, school, year, month) {
         row[3] === school && 
         parseInt(row[4]) === year && 
         parseInt(row[5]) === month &&
-        (row[13] === 'pending' || row[13] === 'rejected')) // Hapus pending/rejected lama
+        (row[13] === 'pending')) // HANYA Hapus 'pending' lama
     {
       rowsToDelete.push(i + 1); // Catat nomor baris (1-based index)
     }
@@ -2768,7 +2785,8 @@ function cancelChangeRequest(email, school, year, month) {
 /**
  * (STAFF) Dipanggil saat staff membuka halaman "Pengajuan Ubah Data".
  */
-function getPendingRequests(staffEmail, school) {
+function getPendingRequests(school) {
+  const staffEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdminOrStaff(staffEmail)) return { success: false, error: "Akses ditolak." };
 
   try {
@@ -2859,7 +2877,8 @@ function getPendingRequests(staffEmail, school) {
  * (STAFF) Dipanggil saat staff menekan "Setujui" atau "Tolak".
  * Memproses semua request ID yang dikirim dalam satu aksi.
  */
-function processChangeRequest(staffEmail, requestIds, action, rejectionReason) {
+function processChangeRequest(requestIds, action, rejectionReason) {
+  const staffEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdminOrStaff(staffEmail)) return { status: "error", message: "Akses ditolak." };
   if (!requestIds || requestIds.length === 0) return { status: "error", message: "Tidak ada pengajuan yang dipilih."};
   if (action === 'reject' && !rejectionReason) return { status: "error", message: "Alasan penolakan wajib diisi."};
@@ -2958,8 +2977,9 @@ function processChangeRequest(staffEmail, requestIds, action, rejectionReason) {
  * (CLIENT-CALLABLE) Menghapus cache ringkasan satu sekolah untuk bulan tertentu.
  * Ini memaksa getSchoolAttendanceSummary untuk membaca ulang dari sheet.
  */
-function clearSchoolSummaryCache(userEmail, school, year, month) {
+function clearSchoolSummaryCache(school, year, month) {
   try {
+    const userEmail = Session.getActiveUser().getEmail();
     // Cek otentikasi dasar (pastikan user ada)
     if (!userEmail || !school) throw new Error("Sesi tidak valid.");
     
@@ -3052,7 +3072,8 @@ function getJamRegulerMap_() {
  * (ADMIN) Dipanggil oleh client untuk memuat pengaturan Jam Reguler.
  * (VERSI PERBAIKAN)
  */
-function getJamRegulerSettings(adminEmail) {
+function getJamRegulerSettings() {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   const sheet = getJamRegulerSheet_();
   // --- START PERBAIKAN ---
@@ -3069,7 +3090,8 @@ function getJamRegulerSettings(adminEmail) {
 /**
  * (ADMIN) Dipanggil oleh client untuk menyimpan pengaturan Jam Reguler.
  */
-function saveJamRegulerSettings(adminEmail, settings) {
+function saveJamRegulerSettings(settings) {
+  const adminEmail = Session.getActiveUser().getEmail();
   if (!checkIfAdmin(adminEmail)) throw new Error("Akses ditolak.");
   try {
     const sheet = getJamRegulerSheet_();
