@@ -1,0 +1,59 @@
+<div id="sptjm-view-container" style="display:none; max-width: 800px; margin: 20px auto;">
+    <div class="card" id="sptjm-content-to-print" style="padding: 40px;">
+        <button class="back-button" onclick="showLkhSptjmDashboard()">&larr; Kembali</button>
+
+        <div class="input-group" style="margin-top: 15px;">
+          <label for="sptjm-view-month-input">Pilih Bulan dan Tahun SPTJM</label>
+          <input type="month" id="sptjm-view-month-input" onchange="handleSptjmViewMonthChange()">
+        </div>
+        
+        <h4 style="text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 30px; font-size: 16px; margin-top: 30px;">SURAT PERNYATAAN TANGGUNG JAWAB MUTLAK</h4>
+        
+        <p style="font-size: 14px; margin-top: 25px;">Yang bertanda tangan di bawah ini:</p>
+        
+        <div class="table-scroll-wrapper">
+          <table style="width: 100%; min-width: 500px; border: none; border-collapse: collapse; margin-left: 15px; font-size: 14px; line-height: 1.6;">
+              <tbody>
+                  <tr><td style="width: 30%;">Nama</td><td style="width: 5px;">:</td><td id="sptjm-view-name" style="font-weight: 500;"></td></tr>
+                  <tr><td>NIP</td><td>:</td><td id="sptjm-view-nip"></td></tr>
+                  <tr><td>Jabatan</td><td>:</td><td id="sptjm-view-jabatan"></td></tr>
+              </tbody>
+          </table>
+        </div>
+        <p style="margin-top: 25px; font-size: 14px;">Menyatakan dengan sesungguhnya bahwa :</p>
+        <ol style="text-align: justify; margin-top: 10px; font-size: 14px; line-height: 1.8; padding-left: 30px;">
+            <li>Perhitungan kehadiran guru non PNS Sertifikasi (Inpassing) yang terdapat pada daftar absensi ceklok di <strong id="sptjm-view-satker"></strong> untuk bulan <strong id="sptjm-view-month"></strong> adalah benar.</li>
+            <li>Apabila di kemudian hari terdapat kesalahan berakibat tidak diterbitkannya SKAKPT pada aplikasi EMISGTK, maka saya bersedia mengembalikan dana TPG yang saya terima ke kas negara.</li>
+        </ol>
+        
+        <p style="margin-top: 25px; font-size: 14px;">Demikian pernyataan ini kami buat dengan sebenar-benarnya.</p>
+        
+        <div class="table-scroll-wrapper">
+          <table style="width: 100%; min-width: 500px; margin-top: 40px; border: none; border-collapse: collapse; text-align: center; font-size: 14px;">
+              <tbody>
+                  <tr>
+                      <td style="width: 50%;">
+                          <p>Mengetahui,</p>
+                          <p>Kepala Madrasah</p>
+                          <div style="height: 80px;"></div>
+                          <p style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;" id="sptjm-view-headmaster-name"></p>
+                          <p style="margin-top: 0;">NIP. <span id="sptjm-view-headmaster-nip"></span></p>
+                      </td>
+                      <td style="width: 50%;">
+                          <p id="sptjm-view-place-date"></p>
+                          <p>Guru</p>
+                          <div style="height: 80px;"></div>
+                          <p style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;" id="sptjm-view-signature-name"></p>
+                          <p style="margin-top: 0;">NIP. <span id="sptjm-view-signature-nip"></span></p>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+        </div>
+        </div>
+    
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="download-sptjm-pdf-button" onclick="handleDownloadSptjmPdf()" class="action-button" disabled><i class="fa-solid fa-file-pdf"></i> <span>Unduh PDF</span></button>
+        <p id="sptjm-download-message" class="message"></p>
+    </div>
+</div>

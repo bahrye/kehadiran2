@@ -1,0 +1,17 @@
+<div id="lkh-container" style="display:none;">
+  <div class="card">
+    <button class="back-button" onclick="showLkhSptjmDashboard()">&larr; Kembali</button>
+    <h2 style="margin-top: 15px;">Buat Laporan Kinerja Harian (LKH)</h2>
+    <div class="input-group">
+      <label for="lkh-month-input">Pilih Bulan dan Tahun</label>
+      <input type="month" id="lkh-month-input" onchange="handleLkhMonthChange()">
+    </div>
+    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+        <button id="apply-weekly-data-button" onclick="handleApplyWeeklyData()" class="action-button warning" style="width: auto;"><i class="fa-solid fa-download"></i> <span>Ambil Data Mingguan</span></button>
+        <p id="apply-weekly-data-message" class="message" style="margin-left: 15px; margin-bottom: 0;"></p>
+    </div>
+    <div id="lkh-table-container"></div>
+    <button id="save-lkh-button" onclick="handleSaveLKH()" disabled><i class="fa-solid fa-floppy-disk"></i> <span>Simpan LKH</span></button>
+    <p id="lkh-message" class="message"></p>
+  </div>
+</div>

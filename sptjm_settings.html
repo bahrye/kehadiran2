@@ -1,0 +1,40 @@
+<div id="sptjm-settings-container" style="display:none;">
+  <div class="card">
+    <button class="back-button" onclick="showLkhSptjmDashboard()">&larr; Kembali</button>
+    <h2 style="margin-top: 15px;">Pengaturan Cetak LKH/SPTJM</h2>
+    <p>Pengaturan ini akan disimpan untuk akun Anda dan digunakan saat membuat dokumen LKH/SPTJM.</p>
+
+    <div class="input-group">
+      <label for="sptjm-nip">NIP Guru (Kosongkan jika tidak ada)</label>
+      <input type="text" id="sptjm-nip" placeholder="Contoh: 198501012010011001">
+    </div>
+
+    <div class="input-group">
+      <label for="sptjm-jabatan">Jabatan Guru</label>
+      <input type="text" id="sptjm-jabatan" placeholder="Contoh: Guru Mapel Informatika">
+    </div>
+    
+    <div class="input-group">
+        <label for="sptjm-nama-kepala">Nama Kepala Madrasah</label>
+        <input type="text" id="sptjm-nama-kepala" placeholder="Contoh: Syamsul Bahri, S.Tr.T">
+    </div>
+
+    <div class="input-group">
+        <label for="sptjm-nip-kepala">NIP Kepala Madrasah (Kosongkan jika tidak ada)</label>
+        <input type="text" id="sptjm-nip-kepala" placeholder="Contoh: 196801011998031001">
+    </div>
+
+    <div class="input-group">
+      <label for="sptjm-tempat">Tempat TTD LKH/SPTJM</label>
+      <input type="text" id="sptjm-tempat" placeholder="Contoh: Bulukumba">
+    </div>
+    
+    <div class="input-group">
+      <label for="sptjm-tanggal">Tanggal TTD SPTJM</label>
+      <input type="date" id="sptjm-tanggal">
+    </div>
+
+    <button id="save-sptjm-settings-button" onclick="handleSaveSptjmSettings()" disabled><i class="fa-solid fa-floppy-disk"></i> <span>Simpan Pengaturan</span></button>
+    <p id="sptjm-settings-message" class="message"></p>
+  </div>
+</div>

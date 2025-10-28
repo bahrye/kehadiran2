@@ -1,0 +1,28 @@
+<div id="lkh-sptjm-dashboard-container" style="display:none;">
+  <div class="card">
+    <button class="back-button" onclick="goBackToDashboard()">&larr; Kembali ke Dasbor</button>
+    <h2 style="margin-top: 15px;">LKH dan SPTJM</h2>
+    <p>Silakan pilih salah satu menu di bawah ini untuk melanjutkan.</p>
+
+    <div class="dashboard-actions" style="margin-top: 20px;">
+      <button id="buat-lkh-button" class="action-button" onclick="showLkhPage()">
+        <i class="fa-solid fa-file-pen"></i> <span>Buat LKH Bulanan</span>
+      </button>
+      <button id="buat-lkh-mingguan-button" class="action-button" onclick="showLkhWeeklyPage()">
+        <i class="fa-solid fa-calendar-week"></i> <span>Buat LKH Mingguan</span>
+      </button>
+      <button id="generate-lkh-button" class="action-button secondary" onclick="showLkhViewPage()">
+        <i class="fa-solid fa-file-invoice"></i> <span>Generate LKH</span>
+      </button>
+      <button id="buat-sptjm-button" class="action-button" onclick="showSptjmViewPage()">
+        <i class="fa-solid fa-file-contract"></i> <span>Generate SPTJM</span>
+      </button>
+      
+      <button id="pengaturan-cetak-button" class="action-button secondary" onclick="showSptjmSettingsPage()">
+        <i class="fa-solid fa-print"></i> <span>Pengaturan Cetak LKH/SPTJM</span>
+      </button>
+      </div>
+    
+    <p id="lkh-sptjm-message" class="message"></p>
+  </div>
+</div>
