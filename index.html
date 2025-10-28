@@ -1919,7 +1919,7 @@
           .withFailureHandler(error => {
             container.innerHTML = `<p style="color: var(--danger-color);">Gagal memuat: ${error.message}</p>`;
           })
-          .getPendingRequests(currentUser.email, selectedSchool);
+          .getPendingRequests(selectedSchool);
       }
 
       /**
@@ -2039,7 +2039,7 @@
             displayMessage('request-list-message', `Error: ${error.message}`);
             actionButtons.forEach(btn => btn.disabled = false); // Aktifkan lagi jika error
           })
-          .processChangeRequest(currentUser.email, requestIds, 'approve', null);
+          .processChangeRequest(requestIds, 'approve', null);
       }
       // --- AKHIR PERBAIKAN ---
 
@@ -2093,7 +2093,7 @@
             displayMessage('request-list-message', `Error: ${error.message}`);
              actionButtons.forEach(btn => btn.disabled = false); // Aktifkan lagi
           })
-          .processChangeRequest(currentUser.email, requestIds, 'reject', reason);
+          .processChangeRequest(requestIds, 'reject', reason);
       }
 
       function loadAndRenderSummary() {
@@ -2717,7 +2717,7 @@
             });
           })
           // MODIFIKASI DI SINI: tambahkan 'selectedSchool'
-          .getSchoolTeachers(currentUser.email, selectedSchool);
+          .getSchoolTeachers(selectedSchool);
       }
 
       function loadStaffSummary() {
@@ -2885,7 +2885,7 @@
               <div class="loader"><div class="ball"></div><div class="ball"></div><div class="ball"></div></div>
               <p>Memuat daftar akun...</p>
             </div>`;
-        google.script.run.withSuccessHandler(renderUserTable).getUsers(currentUser.email);
+        google.script.run.withSuccessHandler(renderUserTable).getUsers();
       }
 
       function renderUserTable(users) {
@@ -2944,7 +2944,8 @@
           } else {
             displayMessage('user-form-message', r.message);
           }
-        })[apiCall](currentUser.email, userData);
+        })
+        [apiCall](userData);
       }
 
       function handleUserDelete(email) {
@@ -2958,7 +2959,8 @@
           google.script.run.withSuccessHandler(r => {
             if (r.status === 'success') loadUsers();
             else renderUserTable([]); // Jika gagal, render ulang (meskipun mungkin akan di-load ulang)
-          }).deleteUser(currentUser.email, email);
+          })
+          .deleteUser(email);
         }
       }
 
@@ -2993,7 +2995,8 @@
           displayMessage('request-day-limit-message', '');
           // --- AKHIR PERUBAHAN ---
           displayMessage('holidays-message', '');
-        }).getSettings(currentUser.email);
+        })
+        .getSettings();
       }
 
       function addHolidayRow(date = '', description = '') {
@@ -3008,7 +3011,8 @@
         const input = document.getElementById('locked-months').value;
         const months = input.split(',').map(s => s.trim()).filter(Boolean);
         displayMessage('locked-months-message', 'Menyimpan...', { isProcessing: true });
-        google.script.run.withSuccessHandler(r => displayMessage('locked-months-message', r.message, { isSuccess: true })).saveLockedMonths(currentUser.email, months);
+        google.script.run.withSuccessHandler(r => displayMessage('locked-months-message', r.message, { isSuccess: true }))
+        .saveLockedMonths(months);
       }
 
       // --- FUNGSI BARU ---
@@ -3019,7 +3023,7 @@
           .withSuccessHandler(r => {
             displayMessage('request-day-limit-message', r.message, { isSuccess: r.status === 'success' });
           })
-          .saveRequestDayLimit(currentUser.email, dayLimit);
+          .saveRequestDayLimit(dayLimit);
       }
       // --- AKHIR FUNGSI BARU ---
 
@@ -3032,13 +3036,15 @@
           if (date && description) holidays.push({ date, description });
         });
         displayMessage('holidays-message', 'Menyimpan...', { isProcessing: true });
-        google.script.run.withSuccessHandler(r => displayMessage('holidays-message', r.message, { isSuccess: true })).saveHolidays(currentUser.email, holidays);
+        google.script.run.withSuccessHandler(r => displayMessage('holidays-message', r.message, { isSuccess: true }))
+        .saveHolidays(holidays);
       }
 
       function saveAnnouncementsSettings() {
         const text = document.getElementById('announcement-input').value;
         displayMessage('announcements-message', 'Menyimpan...', { isProcessing: true });
-        google.script.run.withSuccessHandler(r => displayMessage('announcements-message', r.message, { isSuccess: true })).saveAnnouncements(currentUser.email, text);
+        google.script.run.withSuccessHandler(r => displayMessage('announcements-message', r.message, { isSuccess: true }))
+        .saveAnnouncements(text);
       }
 
       function loadJamRegulerSettings() {
@@ -3077,7 +3083,7 @@
             container.innerHTML = `<p style="color: var(--danger-color);">Error: ${err.message}</p>`;
             button.disabled = false;
           })
-          .getJamRegulerSettings(currentUser.email);
+          .getJamRegulerSettings();
       }
       
       function handleSaveJamReguler() {
@@ -3103,7 +3109,7 @@
             displayMessage('jam-reguler-message', `Error: ${err.message}`);
             button.disabled = false;
           })
-          .saveJamRegulerSettings(currentUser.email, settings);
+          .saveJamRegulerSettings(settings);
       }      
 
       function loadSchoolDropdown() {
@@ -3126,7 +3132,7 @@
             .withFailureHandler(err => {
                 select.innerHTML = `<option value="">Gagal memuat sekolah</option>`;
             })
-            .getSchoolList(currentUser.email);
+            .getSchoolList();
       }
 
       function handleDownloadRekap() {
@@ -3165,7 +3171,7 @@
                   button.disabled = false;
                   button.querySelector('span').textContent = 'Buat Rekap & Unduh';
               })
-              .prepareMonthlyRekapForPrint(currentUser.email, monthInput, schoolInput);
+              .prepareMonthlyRekapForPrint(monthInput, schoolInput);
       }
 
       function openTab(evt, tabName) {
@@ -3626,7 +3632,7 @@
             // Jika gagal, tetap panggil load data
             loadAllTeacherSummaryData();
           })
-          .clearSchoolSummaryCache(currentUser.email, selectedSchool, year, month);
+          .clearSchoolSummaryCache(selectedSchool, year, month);
       }
     </script>
   </body>
